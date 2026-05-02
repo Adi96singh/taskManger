@@ -1,0 +1,38 @@
+# ═══════════════════════════════════════
+# PulseBoard — Root .gitignore
+# ═══════════════════════════════════════
+
+# Environment files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+
+# Node
+node_modules/
+/build
+/dist
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
