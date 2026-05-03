@@ -22,7 +22,8 @@ def create_app():
     # Initialize extensions
     mongo.init_app(app)
     bcrypt.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Enable CORS for all routes and origins
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     # Create indexes
     with app.app_context():

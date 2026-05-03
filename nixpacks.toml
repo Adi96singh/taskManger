@@ -1,0 +1,21 @@
+# Nixpacks configuration for PulseBoard (Monorepo)
+[phases.setup]
+nixPkgs = ["python311", "nodejs"]
+
+[phases.install]
+cmds = [
+    "python -m venv .venv",
+    ". .venv/bin/activate && pip install -r Backend/requirements.txt",
+    "cd pulseboard-frontend && npm install"
+]
+
+[phases.build]
+cmds = [
+    "cd pulseboard-frontend && npm run build",
+    "mkdir -p Backend/static Backend/templates",
+    "cp -r pulseboard-frontend/build/* Backend/static/",
+    "cp pulseboard-frontend/build/index.html Backend/templates/index.html"
+]
+
+[start]
+cmd = ". .venv/bin/activate && cd Backend && gunicorn app:app"
