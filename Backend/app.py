@@ -1,6 +1,6 @@
 """PulseBoard - Team Task Manager API"""
 import os
-from flask import Flask, jsonify, render_template, send_from_directory
+from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
@@ -12,11 +12,7 @@ bcrypt = Bcrypt()
 
 
 def create_app():
-    app = Flask(
-        __name__,
-        static_folder='static',
-        template_folder='templates'
-    )
+    app = Flask(__name__)
     app.config["MONGO_URI"] = Config.MONGO_URI
 
     # Initialize extensions
@@ -49,19 +45,7 @@ def create_app():
     def health():
         return jsonify({"status": "ok", "app": "PulseBoard API"}), 200
 
-    # Serve React frontend
-    @app.route('/')
-    def home():
-        return render_template('index.html')
 
-    @app.route('/<path:path>')
-    def catch_all(path):
-        # Serve static files if they exist
-        static_file = os.path.join(app.static_folder, path)
-        if os.path.isfile(static_file):
-            return send_from_directory(app.static_folder, path)
-        # Otherwise serve index.html for React client-side routing
-        return render_template('index.html')
 
     # Global error handlers
     @app.errorhandler(500)
