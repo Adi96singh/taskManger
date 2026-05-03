@@ -34,6 +34,7 @@ export const signup = (data) => api.post("/auth/signup", data);
 export const login = (data) => api.post("/auth/login", data);
 export const getProfile = () => api.get("/auth/me");
 export const getAllUsers = () => api.get("/auth/users");
+export const updateUserRole = (userId, role) => api.put(`/auth/users/${userId}/role`, { role });
 
 // Projects
 export const createProject = (data) => api.post("/projects", data);

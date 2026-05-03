@@ -10,6 +10,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Projects from "./components/Projects/Projects";
 import ProjectDetail from "./components/Projects/ProjectDetail";
 import MyTasks from "./components/Tasks/MyTasks";
+import Users from "./components/Users/Users";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -57,6 +58,7 @@ function App() {
               <Route path="projects" element={<Projects />} />
               <Route path="projects/:projectId" element={<ProjectDetail />} />
               <Route path="my-tasks" element={<MyTasks />} />
+              <Route path="team" element={<Users />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

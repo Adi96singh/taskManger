@@ -31,10 +31,16 @@ export default function Layout() {
           </NavLink>
 
           {isAdmin && (
-            <NavLink to="/projects" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-              <span className="sidebar-link-icon">▦</span>
-              Projects
-            </NavLink>
+            <>
+              <NavLink to="/projects" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+                <span className="sidebar-link-icon">▦</span>
+                Projects
+              </NavLink>
+              <NavLink to="/team" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+                <span className="sidebar-link-icon">👥</span>
+                Team
+              </NavLink>
+            </>
           )}
 
           <NavLink to="/my-tasks" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>

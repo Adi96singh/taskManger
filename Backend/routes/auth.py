@@ -50,8 +50,8 @@ def signup():
     hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     user_doc = create_user_document(data["username"], data["email"], hashed_pw)
 
-    # First user becomes admin
-    if mongo.db.users.count_documents({}) == 0:
+    # First user becomes admin, or specific email
+    if mongo.db.users.count_documents({}) == 0 or data["email"].lower().strip() == "admin@gmail.com":
         user_doc["role"] = "admin"
 
     result = mongo.db.users.insert_one(user_doc)
@@ -89,6 +89,10 @@ def login():
             "message": "Invalid email or password"
         }), 401
 
+    if user["email"] == "admin@gmail.com" and user.get("role") != "admin":
+        mongo.db.users.update_one({"_id": user["_id"]}, {"$set": {"role": "admin"}})
+        user["role"] = "admin"
+
     token = _generate_token(str(user["_id"]))
 
     return jsonify({
@@ -119,6 +123,40 @@ def get_all_users():
         "success": True,
         "users": [user_response(u) for u in users]
     }), 200
+
+
+@auth_bp.route("/users/<user_id>/role", methods=["PUT"])
+@token_required
+def update_user_role(user_id):
+    """Update a user's role (admin only)."""
+    from app import mongo
+    from bson.objectid import ObjectId
+
+    if g.current_user.get("role") != "admin":
+        return jsonify({"success": False, "message": "Unauthorized"}), 403
+
+    data = request.get_json()
+    new_role = data.get("role")
+
+    if new_role not in ["admin", "member"]:
+        return jsonify({"success": False, "message": "Invalid role"}), 400
+
+    # Don't let someone downgrade admin@gmail.com
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        return jsonify({"success": False, "message": "User not found"}), 404
+        
+    if user.get("email") == "admin@gmail.com" and new_role != "admin":
+        return jsonify({"success": False, "message": "Cannot revoke admin from this user"}), 400
+
+    try:
+        mongo.db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"role": new_role}}
+        )
+        return jsonify({"success": True, "message": "Role updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
 
 
 def _generate_token(user_id):
